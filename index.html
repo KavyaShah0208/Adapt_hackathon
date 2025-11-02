@@ -1,0 +1,1474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI FinTrack - Digital Banking Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Apply Poppins to all elements and set base styles */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #F9FAFB; /* Light Background */
+        }
+        .sidebar-item-active {
+            background-color: #2563EB; /* Blue Accent */
+            color: white;
+        }
+        .sidebar-item {
+            transition: all 0.3s ease-in-out;
+        }
+        .shadow-md-custom {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.06);
+        }
+        .glow-on-hover {
+            transition: box-shadow 0.3s ease-in-out;
+        }
+        .glow-on-hover:hover {
+            box-shadow: 0 0 10px rgba(37, 99, 235, 0.5); /* Blue glow */
+        }
+        /* Style for the floating chat window */
+        #chat-panel {
+            right: 1.5rem;
+            bottom: 1.5rem;
+            z-index: 100;
+            transition: all 0.3s ease-in-out;
+        }
+        /* Removed old custom CSS for timeline, now using pure Tailwind/internal elements */
+    </style>
+</head>
+
+<body class="flex h-screen overflow-hidden">
+
+    <div class="w-64 bg-white shadow-lg p-4 flex flex-col justify-between">
+        <div>
+            <div class="text-2xl font-bold text-gray-800 mb-8 flex items-center">
+                <svg class="w-6 h-6 mr-2 text-[#2563EB]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                AI FinTrack
+            </div>
+            <nav class="space-y-2">
+                <a href="#" data-page="dashboard" class="sidebar-item active block p-3 rounded-xl text-gray-600 hover:bg-gray-100 font-semibold flex items-center transition-colors">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                    Dashboard
+                </a>
+                <a href="#" data-page="transfer" class="sidebar-item block p-3 rounded-xl text-gray-600 hover:bg-gray-100 font-semibold flex items-center transition-colors">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
+                    Instant Transfer
+                </a>
+                <a href="#" data-page="investments" class="sidebar-item block p-3 rounded-xl text-gray-600 hover:bg-gray-100 font-semibold flex items-center transition-colors">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                    Smart Investments
+                </a>
+                <a href="#" data-page="reminders" class="sidebar-item block p-3 rounded-xl text-gray-600 hover:bg-gray-100 font-semibold flex items-center transition-colors">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    Smart Reminders
+                </a>
+                <a href="#" data-page="profile" class="sidebar-item block p-3 rounded-xl text-gray-600 hover:bg-gray-100 font-semibold flex items-center transition-colors">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                    My Profile
+                </a>
+            </nav>
+        </div>
+        <div class="text-xs text-center text-gray-400">
+            AI FinTrack v1.1 | Powered by Gemini
+        </div>
+    </div>
+
+    <div class="flex-1 overflow-y-auto p-8" id="main-content">
+        </div>
+
+    <div id="ai-analysis-modal" class="fixed inset-0 bg-gray-900 bg-opacity-50 hidden items-center justify-center z-50 p-4 transition-opacity duration-300">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto p-8 relative">
+
+            <button onclick="closeAnalysisModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-700 transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+
+            <h2 class="text-3xl font-bold text-gray-800 mb-6 flex items-center">
+                <span id="analysis-stock-name">Stock Name</span>
+                <span id="analysis-symbol" class="ml-2 text-base font-medium text-gray-500">(SYM)</span>
+            </h2>
+
+            <div class="mt-4 mb-8">
+                <div class="h-48 border border-gray-200 rounded-xl p-4 bg-gray-50">
+                    <canvas id="miniChart"></canvas>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+                <div class="col-span-1 space-y-4">
+                    <div class="p-5 bg-gray-50 rounded-xl">
+                        <p class="text-sm font-medium text-gray-500">Current Price</p>
+                        <p id="analysis-price" class="text-3xl font-extrabold text-gray-900 mt-1">₹0</p>
+                    </div>
+
+                    <div id="analysis-trend-box" class="p-5 rounded-xl transition-colors border">
+                        <p class="text-sm font-medium text-gray-800 flex items-center">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+                            Current Trend
+                        </p>
+                        <p id="analysis-trend" class="text-xl font-bold mt-1">N/A</p>
+                    </div>
+
+                    <div class="p-5 bg-gray-50 rounded-xl">
+                        <p class="text-sm font-medium text-gray-500">AI Potential</p>
+                        <p id="analysis-potential" class="text-xl font-bold text-gray-900 mt-1">N/A</p>
+                    </div>
+
+                    <div class="pt-4 border-t border-gray-100">
+                        <p class="text-lg font-semibold mb-3 text-gray-700">Your Next Move</p>
+                        <div class="flex space-x-3">
+                            <button onclick="logAction('Buy')" class="flex-1 py-3 text-white rounded-xl font-semibold glow-on-hover bg-green-500 hover:bg-green-600 transition-colors">Buy</button>
+                            <button onclick="logAction('Hold')" class="flex-1 py-3 text-white rounded-xl font-semibold glow-on-hover bg-blue-500 hover:bg-blue-600 transition-colors">Hold</button>
+                            <button onclick="logAction('Sell')" class="flex-1 py-3 text-white rounded-xl font-semibold glow-on-hover bg-red-500 hover:bg-red-600 transition-colors">Sell</button>
+                        </div>
+                        <p id="action-message" class="text-sm mt-3 text-center h-5 text-gray-500"></p>
+                    </div>
+                </div>
+
+                <div class="col-span-2 space-y-6">
+                    <div class="bg-blue-50 p-6 rounded-2xl border-2 border-blue-200">
+                        <div class="flex items-center mb-3">
+                            <svg class="w-6 h-6 text-[#2563EB] mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13m-6 5h6"></path></svg>
+                            <h3 class="text-xl font-bold text-blue-700">AI Smart Summary</h3>
+                        </div>
+                        <p id="analysis-summary" class="text-gray-700 leading-relaxed italic">
+                            The AI model is currently generating a concise summary of the stock's recent performance and outlook.
+                        </p>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-md">
+                        <h3 class="text-lg font-bold text-gray-800 mb-2">Detailed AI Reasoning</h3>
+                        <p id="analysis-explanation" class="text-gray-600 leading-relaxed">
+                            Our AI model analyzed this stock’s recent trading volume, RSI, and moving averages. The upward trend is supported by positive earnings and stable FII inflows. Recommended action: Hold for now — moderate risk, steady potential.
+                        </p>
+                    </div>
+
+                    <div class="p-6 rounded-2xl border border-gray-200 shadow-md">
+                        <div class="flex items-center mb-3">
+                            <svg class="w-6 h-6 text-yellow-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.276a11.002 11.002 0 00-6.736-4.661L12 3a1 1 0 00-1-1h-2a1 1 0 00-1 1l-.882 1.063A11.002 11.002 0 004.382 6.724a11.002 11.002 0 00-.724 10.552l.882 1.063a1 1 0 001 1h2a1 1 0 001-1l.882-1.063A11.002 11.002 0 0019.618 17.276l-.882-1.063a1 1 0 00-1-1h-2a1 1 0 00-1 1l-.882 1.063A11.002 11.002 0 0019.618 17.276z"></path></svg>
+                            <h3 class="text-xl font-bold text-gray-800">AI Recommendation</h3>
+                        </div>
+                        <p id="analysis-suggestion" class="text-2xl font-extrabold text-blue-500 mt-2">HOLD</p>
+                        <p id="analysis-suggestion-reason" class="text-gray-600 mt-1">Strong fundamentals but moderate volatility.</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="chat-panel" class="fixed hidden">
+        <div id="chat-bubble" class="w-80 bg-white rounded-xl shadow-2xl overflow-hidden flex flex-col h-96">
+            <div class="bg-blue-500 text-white p-4 flex justify-between items-center">
+                <p class="font-bold">Gemini FinChat</p>
+                <button onclick="toggleChat()" class="text-white hover:text-gray-200">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            <div id="chat-messages" class="flex-1 p-4 overflow-y-auto space-y-3 text-sm">
+                <div class="flex justify-start">
+                    <div class="bg-gray-200 text-gray-800 p-3 rounded-lg max-w-[85%]">
+                        Hello! I'm your AI Stock Assistant. Ask me about your current holdings or market trends.
+                    </div>
+                </div>
+            </div>
+            <div class="p-3 border-t">
+                <input type="text" id="chat-input" placeholder="Ask a question..." class="w-full p-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+            </div>
+        </div>
+        <button id="chat-toggle-btn" onclick="toggleChat()" class="bg-[#2563EB] hover:bg-blue-600 text-white p-4 rounded-full shadow-lg transition-all duration-300 ml-auto block mt-4">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.805A1.79 1.79 0 014 14c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+        </button>
+    </div>
+
+
+    <div id="floating-reminder-chat" class="fixed right-8 bottom-8 z-40 hidden">
+        <button id="reminder-chat-toggle-btn" onclick="toggleReminderChat()" class="bg-[#2563EB] hover:bg-blue-600 text-white p-4 rounded-full shadow-lg transition-all duration-300">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.805A1.79 1.79 0 014 14c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+        </button>
+        <div id="reminder-chat-dialog" class="bg-white p-4 rounded-xl shadow-2xl w-72 mt-4 hidden">
+            <p class="font-bold text-sm text-blue-600 mb-2">AI Reminders Chat</p>
+            <div class="space-y-2 text-xs text-gray-700">
+                <p>— Do you want to **schedule** a reminder for your next due?</p>
+                <p>— Would you like me to notify you on **WhatsApp** or **in-app**?</p>
+                <p>— **Query** my recent alerts history.</p>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        // --- DATA MODEL (Simulated) ---
+
+        const STOCK_HOLDINGS = [
+            { id: 1, symbol: 'TCS', name: 'Tata Consultancy Services', price: 3450.00, change: '+1.2%', trend: 'Up', action: 'Hold', history: [3400, 3420, 3410, 3445, 3430, 3450, 3450] },
+            { id: 2, symbol: 'INFY', name: 'Infosys Ltd', price: 1550.00, change: '-0.8%', trend: 'Down', action: 'Sell', history: [1560, 1555, 1550, 1545, 1552, 1550, 1550] },
+            { id: 3, symbol: 'RELIANCE', name: 'Reliance Industries', price: 2420.00, change: '+0.5%', trend: 'Up', action: 'Hold', history: [2410, 2415, 2418, 2420, 2415, 2420, 2420] },
+            { id: 4, symbol: 'HDFC', name: 'HDFC Bank', price: 1680.00, change: '-2.1%', trend: 'Down', action: 'Buy', history: [1720, 1700, 1690, 1675, 1685, 1680, 1680] },
+            { id: 5, symbol: 'KOTAKBANK', name: 'Kotak Mahindra Bank', price: 1850.00, change: '+3.5%', trend: 'Up', action: 'Buy', history: [1790, 1805, 1820, 1835, 1845, 1850, 1850] },
+        ];
+
+        // UPDATED: Added numeric riskValue and returnValue for plotting the scatter chart
+        const INVESTMENT_OPTIONS = [
+            { name: 'Fixed Deposits & Bonds', description: 'Very safe capital preservation, but low growth potential.', risk: 'Low', return: 4, duration: 'Short/Medium', color: 'green', riskValue: 2, returnValue: 4, plotColor: '#10B981' }, // Green
+            { name: 'Real Estate/REITs', description: 'Long-term asset appreciation and potential rental income.', risk: 'Moderate', return: 8, duration: 'Long', color: 'yellow', riskValue: 4, returnValue: 8, plotColor: '#60A5FA' }, // Blue
+            { name: 'Index & Balanced Mutual Funds', description: 'Diversified portfolio with professional management.', risk: 'Moderate', return: 10, duration: 'Medium/Long', color: 'yellow', riskValue: 6, returnValue: 10, plotColor: '#F59E0B' }, // Yellow
+            { name: 'Direct Equity (Stocks)', description: 'High potential reward but requires active monitoring and high risk tolerance.', risk: 'High', return: 18, duration: 'Short/Medium', color: 'red', riskValue: 9, returnValue: 18, plotColor: '#EF4444' }, // Red
+        ];
+        
+        const USER_PROFILE = {
+            name: "Adish Shah",
+            email: "Adish.Shah@example.com",
+            userId: "AS-8592-AITRACK-47",
+            accountStatus: "Verified & Active",
+            dateJoined: "January 15, 2023",
+            riskProfile: "Moderate (Level 5/10)",
+            totalAssets: "₹10,00,000",
+            netWorth: "₹9,50,000",
+            lifetimeInvestmentGain: "+₹1,50,000",
+            preferredLanguage: "English (US)",
+            themePreference: "Light Mode",
+            // Reminder specific details
+            currentBalance: 18000,
+            upcomingDueAmount: 18500, // Slightly higher to trigger "need to save"
+            upcomingDueDays: 10,
+            dueDescription: "Credit Card Payment",
+            notificationPref: "WhatsApp",
+            // Transfer specific details
+            availableBalance: 150000,
+            userAccount: '8910xxxx78',
+            beneficiaries: [
+                { name: 'Direct Transfer', account: '9001xxxx23', bank: 'HDFC Bank', limit: 100000 },
+                { name: 'Credit Card', account: '7854xxxx90', bank: 'ICICI Bank', limit: 50000 },
+            ]
+        };
+
+        // --- TRANSACTION DATA (Realistic Generation Logic) ---
+        let TRANSACTIONS = [];
+        const CATEGORIES = ['Groceries', 'Rent', 'Utilities', 'Eating Out', 'Transport', 'Shopping', 'Investment', 'Salary', 'Entertainment', 'Healthcare'];
+        const CATEGORY_TYPE = {
+            'Groceries': 'Debit', 'Rent': 'Debit', 'Utilities': 'Debit', 'Eating Out': 'Debit', 'Transport': 'Debit', 
+            'Shopping': 'Debit', 'Investment': 'Debit', 'Entertainment': 'Debit', 'Healthcare': 'Debit', 'Salary': 'Credit'
+        };
+        const CATEGORY_COLORS = {
+            'Groceries': '#3B82F6', 'Rent': '#EF4444', 'Utilities': '#10B981', 'Eating Out': '#F59E0B', 'Transport': '#6366F1',
+            'Shopping': '#EC4899', 'Investment': '#06B6D4', 'Salary': '#10B981', 'Entertainment': '#F97316', 'Healthcare': '#8B5CF6'
+        };
+
+        function generateRandomAmount(min, max) {
+            return parseFloat((Math.random() * (max - min) + min).toFixed(2));
+        }
+
+        function generateTransactionDetails(category) {
+            let amount, description;
+            switch (category) {
+                case 'Rent': amount = 30000; description = 'Monthly Rent Transfer'; break;
+                case 'Salary': amount = 85000 + generateRandomAmount(0, 5000); description = 'Monthly Salary Credit - ABC Corp.'; break;
+                case 'Utilities': amount = generateRandomAmount(3500, 6000); description = 'Internet & Power Bill Payment'; break;
+                case 'Investment': amount = 10000; description = 'SIP: Balanced Mutual Fund'; break;
+                case 'Shopping': amount = generateRandomAmount(1500, 15000); description = Math.random() < 0.5 ? 'E-Commerce Purchase (Flipkart)' : 'Department Store Retail'; break;
+                case 'Groceries': amount = generateRandomAmount(800, 3500); description = 'Supermarket Provisioning'; break;
+                case 'Eating Out': amount = generateRandomAmount(500, 2500); description = 'Restaurant / Cafe Bill'; break;
+                case 'Transport': amount = generateRandomAmount(200, 1500); description = 'Fuel / Ride Share Payment'; break;
+                case 'Entertainment': amount = generateRandomAmount(500, 1500); description = 'Netflix Subscription / Movie Tickets'; break;
+                case 'Healthcare': amount = generateRandomAmount(1000, 5000); description = 'Pharmacy / Doctor Visit'; break;
+                default: amount = generateRandomAmount(100, 5000); description = `${category} Expense`; break;
+            }
+            return { amount, description };
+        }
+
+        function generateTransactions() {
+            TRANSACTIONS = [];
+            const today = new Date();
+            const daysInMonth = 30;
+            let id = 100;
+
+            for (let i = 0; i <= daysInMonth; i++) {
+                const date = new Date(today);
+                date.setDate(today.getDate() - i);
+                const formattedDate = date.toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' });
+
+                // Define daily activity volume
+                const dailyActivity = Math.floor(Math.random() * 4) + 1; // 1 to 4 transactions per day
+
+                for (let j = 0; j < dailyActivity; j++) {
+                    let category;
+                    let isCredit = false;
+
+                    // Fixed events for realism:
+                    if (i === 1) { // Yesterday or Day 1
+                        category = 'Groceries'; // Always a transaction close to today
+                    } else if (i === 15 && j === 0) { // Mid-month fixed expense (e.g., Investment SIP)
+                        category = 'Investment';
+                    } else if (i === 28 && j === 0) { // End of month - Rent
+                        category = 'Rent';
+                    } else if (i === 29 && j === 0) { // Salary Day
+                        category = 'Salary';
+                        isCredit = true;
+                    } else {
+                        // Randomly pick a category, weighted towards debits
+                        const debitCategories = CATEGORIES.filter(c => CATEGORY_TYPE[c] === 'Debit');
+                        category = debitCategories[Math.floor(Math.random() * debitCategories.length)];
+                    }
+
+                    const type = CATEGORY_TYPE[category];
+                    const { amount, description } = generateTransactionDetails(category);
+
+                    TRANSACTIONS.push({
+                        id: id--,
+                        date: formattedDate,
+                        timestamp: date.getTime(),
+                        description: description,
+                        category: category,
+                        type: type,
+                        amount: parseFloat(amount.toFixed(2))
+                    });
+                }
+            }
+            // Final sort by timestamp to ensure perfect reverse chronological order
+            TRANSACTIONS.sort((a, b) => b.timestamp - a.timestamp);
+            TRANSACTIONS = TRANSACTIONS.slice(0, 100); // Limit to 100 transactions
+        }
+
+        generateTransactions(); // Initialize transactions on load
+
+
+        function calculateCategorySpending() {
+            const spending = {};
+            // Filter to only consider Debits for spending analysis
+            TRANSACTIONS.filter(t => t.type === 'Debit').forEach(t => {
+                spending[t.category] = (spending[t.category] || 0) + t.amount;
+            });
+            return spending;
+        }
+
+
+        let currentPage = 'dashboard';
+        let miniChartInstance = null; // Dedicated instance for the modal mini chart (FIXED)
+        let spendingChartInstance = null; // Separate instance for the dashboard spending chart
+        let investmentChartInstance = null; // Separate instance for the investment risk/return chart
+        
+        // Helper function to format INR
+        function formatINR(amount) {
+            // Ensure proper rounding before formatting
+            const roundedAmount = Math.round(amount * 100) / 100;
+            return `₹${roundedAmount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+        }
+        
+        // --- AI INSIGHT GENERATION (SIMULATION) ---
+        function generateAIInsight(stock) {
+            let trend, trendColor, summary, explanation;
+            let suggestion, suggestionReason, potential;
+
+            const changeVal = parseFloat(stock.change.replace(/[+%-]/g, ''));
+            const isPositive = stock.change.includes('+');
+            const absChange = isPositive ? changeVal : -changeVal;
+
+            if (absChange >= 1.5 && isPositive) {
+                trend = "Strong Uptrend (Momentum)";
+                trendColor = "text-green-600 bg-green-100 border-green-200";
+                summary = `Experiencing strong growth due to robust Q2 earnings and significant investor interest, outperforming the sector index.`;
+                explanation = `Our proprietary AI model highlights a strong confluence of technical indicators (MACD crossover, RSI > 70) alongside positive corporate news flow. The surge is sustainable in the short term, but watch for consolidation above ${stock.price} INR.`;
+                suggestion = "Buy";
+                suggestionReason = "High confidence in short-term upside, strong fundamentals.";
+                suggestionColor = "green";
+                potential = "Estimated 15-20% growth in next 6 months.";
+            } else if (absChange > 0 && isPositive) {
+                trend = "Slight Uptrend (Stable)";
+                trendColor = "text-yellow-700 bg-yellow-100 border-yellow-200";
+                summary = `Maintaining a steady upward path, supported by consistent business performance and low volatility in trading volumes.`;
+                explanation = `The stock is moving in line with the broader market. The AI analysis of moving averages suggests moderate, predictable returns. Low risk profile makes it a safe portfolio anchor.`;
+                suggestion = "Hold";
+                suggestionReason = "Stable fundamentals, low risk, moderate returns expected.";
+                suggestionColor = "blue";
+                potential = "Estimated 5-10% growth in next 3 months.";
+            } else if (absChange >= 1.5 && !isPositive) {
+                trend = "Significant Downtrend (High Risk)";
+                trendColor = "text-red-600 bg-red-100 border-red-200";
+                summary = `A sharp decline linked to weak sector demand and negative analyst downgrades across the industry.`;
+                explanation = `Technical indicators (RSI < 30) suggest the stock is oversold, but the negative news sentiment is strong. The AI advises caution until a clear support level is established. Selling now limits further losses.`;
+                suggestion = "Sell";
+                suggestionReason = "High downside risk; exit position to re-enter at a lower price point.";
+                suggestionColor = "red";
+                potential = "Potential 10-15% loss in next 1 month if trend holds.";
+            } else {
+                trend = "Stable / Sideways (Consolidation)";
+                trendColor = "text-gray-600 bg-gray-100 border-gray-200";
+                summary = `Price movement is minimal, suggesting a period of market indecision. Awaiting a clear catalyst for a breakout.`;
+                explanation = `The AI model sees a balance between buyers and sellers. Trading volume is average, and volatility is low. This pattern often precedes a major announcement or earnings report.`;
+                suggestion = "Hold";
+                suggestionReason = "Awaiting catalyst; no immediate need to exit or increase position.";
+                suggestionColor = "blue";
+                potential = "Stable, minimal immediate growth expected.";
+            }
+
+            return { trend, trendColor, summary, explanation, suggestion, suggestionReason, potential, suggestionColor };
+        }
+
+        // --- UI RENDER FUNCTIONS ---
+        
+        // NEW: RENDER TRANSFER PAGE
+        function renderTransfer() {
+            // Destroy existing charts
+            if (miniChartInstance) { miniChartInstance.destroy(); miniChartInstance = null; }
+            if (spendingChartInstance) { spendingChartInstance.destroy(); spendingChartInstance = null; }
+            if (investmentChartInstance) { investmentChartInstance.destroy(); investmentChartInstance = null; }
+
+            // Hide chat panels
+            document.getElementById('floating-reminder-chat').classList.add('hidden');
+            document.getElementById('chat-panel').classList.add('hidden');
+
+            const contentDiv = document.getElementById('main-content');
+            
+            // Generate beneficiary options
+            const beneficiaryOptions = USER_PROFILE.beneficiaries.map(b => `
+                <option value="${b.account}">${b.name} (${b.bank})</option>
+            `).join('');
+
+            contentDiv.innerHTML = `
+                <div class="flex items-center justify-between mb-8">
+                    <div>
+                        <h1 class="text-4xl font-extrabold text-gray-900 mb-1">Instant Transfer</h1>
+                        <p class="text-lg text-gray-500">Send money quickly and securely to your linked accounts.</p>
+                    </div>
+                    <svg class="w-12 h-12 text-[#2563EB]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2-1.343-2-3-2zM21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.805A1.79 1.79 0 014 14c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    
+                    <div class="lg:col-span-2 bg-white p-8 rounded-2xl shadow-xl border border-gray-100">
+                        <h2 class="text-2xl font-bold text-gray-800 mb-6">New Funds Transfer</h2>
+                        <form onsubmit="event.preventDefault(); simulateTransfer();" class="space-y-6">
+
+                            <div class="bg-gray-50 p-4 rounded-xl border border-gray-200">
+                                <p class="text-sm font-medium text-gray-500 mb-1">Sending From:</p>
+                                <p class="text-lg font-semibold text-gray-800">${USER_PROFILE.userAccount}</p>
+                                <p class="text-2xl font-bold text-green-600 mt-2">Available: ${formatINR(USER_PROFILE.availableBalance)}</p>
+                            </div>
+
+                            <div>
+                                <label for="recipient" class="block text-sm font-medium text-gray-700 mb-2">Select Recipient</label>
+                                <select id="recipient" name="recipient" required class="w-full p-3 border border-gray-300 rounded-xl bg-white focus:ring-blue-500 focus:border-blue-500 transition">
+                                    <option value="" disabled selected>Choose a beneficiary</option>
+                                    ${beneficiaryOptions}
+                                </select>
+                            </div>
+
+                            <div>
+                                <label for="amount" class="block text-sm font-medium text-gray-700 mb-2">Amount to Send (₹)</label>
+                                <input type="number" id="amount" name="amount" required min="100" max="${USER_PROFILE.availableBalance}" placeholder="Min 100, Max ${USER_PROFILE.availableBalance}" class="w-full p-3 text-lg font-semibold border border-gray-300 rounded-xl focus:ring-blue-500 focus:border-blue-500 transition">
+                            </div>
+
+                            <div>
+                                <label for="note" class="block text-sm font-medium text-gray-700 mb-2">Purpose (Optional)</label>
+                                <input type="text" id="note" name="note" placeholder="E.g., Rent share, loan payment, etc." class="w-full p-3 border border-gray-300 rounded-xl focus:ring-blue-500 focus:border-blue-500 transition">
+                            </div>
+
+                            <button type="submit" id="transfer-button" class="w-full py-3 bg-blue-500 text-white text-xl font-bold rounded-xl shadow-md hover:bg-blue-600 transition-colors flex items-center justify-center">
+                                <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                Confirm Instant Transfer
+                            </button>
+                        </form>
+                        
+                        <p id="transfer-message" class="mt-6 text-center text-sm h-6 text-gray-600"></p>
+                    </div>
+
+                    <div class="lg:col-span-1 space-y-6">
+                        <div class="bg-white p-6 rounded-2xl shadow-xl border border-gray-100">
+                            <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                                <span class="mr-2 text-blue-500"></span> Transfer Limits
+                            </h3>
+                            <p class="text-sm text-gray-600 mb-4">Your Custom Trasnfer Limits</p>
+                            <div class="space-y-3">
+                                ${USER_PROFILE.beneficiaries.map(b => `
+                                    <div class="flex justify-between items-center border-b pb-2">
+                                        <span class="text-gray-500 text-sm">${b.name}</span>
+                                        <span class="font-semibold text-gray-700">Limit: ${formatINR(b.limit)}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+
+                        <div class="bg-white p-6 rounded-2xl shadow-xl border border-gray-100">
+                            <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                                <span class="mr-2 text-green-500"></span> Recent Transfers
+                            </h3>
+                            <ul class="space-y-2 text-sm text-gray-700">
+                                <li>Sent ${formatINR(5000)} to S. Patel (Today) <span class="text-xs text-green-500 ml-1">✓</span></li>
+                                <li>Sent ${formatINR(25000)} to R. Sharma (Yesterday) <span class="text-xs text-green-500 ml-1">✓</span></li>
+                                <li class="text-gray-400">Sent ${formatINR(1000)} to R. Sharma (2 days ago)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+
+        function renderDashboard() {
+            // Destroy existing charts
+            if (miniChartInstance) { miniChartInstance.destroy(); miniChartInstance = null; }
+            if (spendingChartInstance) { spendingChartInstance.destroy(); spendingChartInstance = null; }
+            if (investmentChartInstance) { investmentChartInstance.destroy(); investmentChartInstance = null; } // Destroy investment chart if present
+
+            // Hide the dedicated reminder chat panel if it was visible
+            document.getElementById('floating-reminder-chat').classList.add('hidden');
+            document.getElementById('chat-panel').classList.remove('hidden'); // Show default chat panel
+            document.getElementById('chat-bubble').classList.add('hidden'); // Ensure chat bubble is hidden by default
+
+
+            const contentDiv = document.getElementById('main-content');
+            
+            // Replaced the simple H1 block with a flex container for the button
+            contentDiv.innerHTML = `
+                <div class="flex justify-between items-start mb-8">
+                    <div>
+                        <h1 class="text-4xl font-extrabold text-gray-900 mb-1">Welcome Back! Adish</h1>
+                        <p class="text-lg text-gray-500">Your financial snapshot as of today.</p>
+                    </div>
+                    <button class="bg-[#2563EB] hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-xl shadow-md transition-colors flex items-center">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                        Upload Bank Statement
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+                    <div class="bg-white p-6 rounded-2xl shadow-md-custom border border-gray-100">
+                        <p class="text-sm font-medium text-gray-500">Total Balance</p>
+                        <p class="text-3xl font-bold text-gray-900 mt-1">${formatINR(150000)}</p>
+                        <p class="text-xs text-green-500 mt-2 flex items-center">
+                            <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path></svg>
+                            +3.4% this month
+                        </p>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl shadow-md-custom border border-gray-100">
+                        <p class="text-sm font-medium text-gray-500">Monthly Spending</p>
+                        <p class="text-3xl font-bold text-red-500 mt-1">${formatINR(45200)}</p>
+                        <p class="text-xs text-red-500 mt-2 flex items-center">
+                            <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
+                            +1.1% compared to last month
+                        </p>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl shadow-md-custom border border-gray-100">
+                        <p class="text-sm font-medium text-gray-500">Investment Value</p>
+                        <p class="text-3xl font-bold text-gray-900 mt-1">${formatINR(850000)}</p>
+                        <p class="text-xs text-green-500 mt-2 flex items-center">
+                            <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path></svg>
+                            +8.2% total return
+                        </p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-12">
+                    
+                    <div class="lg:col-span-1 bg-white p-6 rounded-2xl shadow-xl border border-gray-100">
+                        <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                            <span class="mr-2 text-red-500"></span> Monthly Spending Breakdown
+                        </h2>
+                        <div class="h-140">
+                            <canvas id="spendingPieChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="lg:col-span-2 bg-white p-6 rounded-2xl shadow-xl border border-gray-100">
+                        <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                            <span class="mr-2 text-blue-500"></span> Last Transactions
+                        </h2>
+                        <div class="overflow-x-auto max-h-96 overflow-y-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50 sticky top-0">
+                                    <tr>
+                                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
+                                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
+                                        <th class="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Amount (₹)</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-100" id="transaction-list">
+                                    </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white p-8 rounded-2xl shadow-xl border border-gray-100">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-1 flex items-center">
+                        AI Stock Insights <span class="ml-2 text-blue-500">📊</span>
+                    </h2>
+                    <p class="text-gray-500 mb-6">
+                        Get instant, intelligent analysis for every stock you hold.
+                    </p>
+
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Stock</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price (₹)</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Change</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Trend</th>
+                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">AI Action</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200" id="stock-list">
+                                </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+
+            // Inject stock data into the table
+            const stockListBody = document.getElementById('stock-list');
+            stockListBody.innerHTML = STOCK_HOLDINGS.map(stock => {
+                const isPositive = stock.change.includes('+');
+                const changeColor = isPositive ? 'text-[#10B981]' : 'text-[#EF4444]'; // Green or Red
+                const trendIcon = stock.trend === 'Up' ? '🔼' : stock.trend === 'Down' ? '🔽' : '▪️';
+                return `
+                    <tr class="hover:bg-gray-50 transition-colors duration-200">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${stock.name} (${stock.symbol})</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">${stock.price.toLocaleString('en-IN', { style: 'currency', currency: 'INR', minimumFractionDigits: 2 })}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm ${changeColor}">${stock.change}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">${trendIcon} ${stock.trend}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                            <button onclick="showAnalysisModal(${stock.id})" class="text-[#2563EB] hover:text-blue-700 font-semibold transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 rounded px-2 py-1">
+                                [Analyze]
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+
+            // Inject last 15 transactions
+            const transactionListBody = document.getElementById('transaction-list');
+            // Ensure we only show the 15 newest transactions based on the sorted list
+            const last15Transactions = TRANSACTIONS.slice(0, 15); 
+            transactionListBody.innerHTML = last15Transactions.map(t => {
+                const isDebit = t.type === 'Debit';
+                const amountColor = isDebit ? 'text-red-600' : 'text-green-600';
+                const sign = isDebit ? '-' : '+';
+                return `
+                    <tr class="text-sm">
+                        <td class="px-4 py-2 whitespace-nowrap text-gray-500">${t.date}</td>
+                        <td class="px-4 py-2 whitespace-nowrap font-medium text-gray-700">${t.description}</td>
+                        <td class="px-4 py-2 whitespace-nowrap text-gray-600">${t.category}</td>
+                        <td class="px-4 py-2 whitespace-nowrap text-right font-semibold ${amountColor}">${sign}${t.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+                    </tr>
+                `;
+            }).join('');
+
+            renderSpendingPieChart(); // Render the new chart
+        }
+
+        function renderInvestments() {
+            // Destroy existing charts
+            if (miniChartInstance) { miniChartInstance.destroy(); miniChartInstance = null; }
+            if (spendingChartInstance) { spendingChartInstance.destroy(); spendingChartInstance = null; }
+            if (investmentChartInstance) { investmentChartInstance.destroy(); investmentChartInstance = null; } // Destroy previous instance
+
+            // Hide the dedicated reminder chat panel if it was visible
+            document.getElementById('floating-reminder-chat').classList.add('hidden');
+            document.getElementById('chat-panel').classList.remove('hidden'); // Show default chat panel
+            document.getElementById('chat-bubble').classList.add('hidden'); // Ensure chat bubble is hidden by default
+
+            const contentDiv = document.getElementById('main-content');
+            contentDiv.innerHTML = `
+                <h1 class="text-4xl font-extrabold text-gray-900 mb-2">Smart Investments for Smarter Savings</h1>
+                <p class="text-lg text-gray-500 mb-8">Analyze your options and grow your wealth intelligently.</p>
+
+                <div class="grid grid-cols-1 gap-8 lg:grid-cols-4">
+                    
+                    <div class="space-y-8 lg:col-span-1">
+                        <div class="bg-white p-6 rounded-2xl shadow-xl border border-gray-100">
+                            <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                                <svg class="w-5 h-5 mr-2 text-[#10B981]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 8h6m-5 0a3 3 0 110 6H9l3 3m-3-3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                Your Investment Potential
+                            </h3>
+                            <div class="space-y-3">
+                                <div class="flex justify-between items-center border-b pb-2">
+                                    <span class="text-gray-500">Total Savings</span>
+                                    <span class="text-lg font-semibold text-[#10B981]">${formatINR(50000)}</span>
+                                </div>
+                                <div class="flex justify-between items-center border-b pb-2">
+                                    <span class="text-gray-500">Suggested Investment Amount</span>
+                                    <span class="text-lg font-semibold text-[#2563EB]">${formatINR(35000)}</span>
+                                </div>
+                                <div class="pt-2">
+                                    <span class="text-sm font-medium text-gray-700 block">Recommended Allocation:</span>
+                                    <div class="flex justify-between text-xs mt-1">
+                                        <span class="text-green-600 font-semibold">60% Safe</span>
+                                        <span class="text-yellow-600 font-semibold">30% Moderate</span>
+                                        <span class="text-red-600 font-semibold">10% High Risk</span>
+                                    </div>
+                                    <div class="flex h-2 bg-gray-200 rounded-full mt-2 overflow-hidden">
+                                        <div class="bg-green-500" style="width: 60%;"></div>
+                                        <div class="bg-yellow-500" style="width: 30%;"></div>
+                                        <div class="bg-red-500" style="width: 10%;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-blue-50 p-6 rounded-2xl border-2 border-blue-200 shadow-md">
+                            <h3 class="text-xl font-bold text-blue-700 mb-2 flex items-center">
+                                <svg class="w-5 h-5 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13m-6 5h6"></path></svg>
+                                AI Investment Recommendation
+                            </h3>
+                            <p class="text-gray-700 leading-relaxed italic">
+                                Based on your savings pattern and moderate risk profile, we recommend investing <span class="font-bold text-blue-600">40% in Index Funds (SIPs)</span> and <span class="font-bold text-blue-600">35% in Low-Risk Bonds</span> for stable, balanced growth over the next 5 years.
+                            </p>
+                        </div>
+                    </div>
+
+
+                    <div class="lg:col-span-3 space-y-8">
+
+                        <div class="bg-white p-8 rounded-2xl shadow-xl border border-gray-100">
+                            <h2 class="text-2xl font-bold text-gray-800 mb-4 flex items-center">
+                                <span class="mr-2 text-[#2563EB]"></span> Risk vs. Return Landscape
+                            </h2>
+                            <p class="text-gray-500 mb-4">Compare investment options based on risk index (1-10) and annual return potential (%).</p>
+                            <div class="h-[450px]">
+                                <canvas id="riskReturnChart"></canvas>
+                            </div>
+                        </div>
+                        
+                        <div class="pt-4 border-t border-gray-100">
+                            <h2 class="text-2xl font-bold text-gray-800 mb-6">Expert Tips & Wealth Insights</h2>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div class="bg-blue-50 p-5 rounded-2xl shadow-md border-b-4 border-blue-400 transform transition duration-300 hover:scale-[1.02]">
+                                    <div class="flex items-center mb-2">
+                                        <svg class="w-6 h-6 text-blue-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10m0 0h16M4 17h16M4 7h16M8 7v10m8-10v10"></path></svg>
+                                        <p class="text-sm font-extrabold text-blue-700 uppercase">Diversify</p>
+                                    </div>
+                                    <p class="text-base font-semibold text-gray-800">Don't put all your eggs in one basket.</p>
+                                    <p class="text-xs text-gray-600 mt-1">Spread capital across different asset classes for better protection against market shocks.</p>
+                                </div>
+
+                                <div class="bg-green-50 p-5 rounded-2xl shadow-md border-b-4 border-green-400 transform transition duration-300 hover:scale-[1.02]">
+                                    <div class="flex items-center mb-2">
+                                        <svg class="w-6 h-6 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+                                        <p class="text-sm font-extrabold text-green-700 uppercase">Compounding</p>
+                                    </div>
+                                    <p class="text-base font-semibold text-gray-800">Time in the market beats timing the market.</p>
+                                    <p class="text-xs text-gray-600 mt-1">Start small, stay invested, and let the magic of compounding multiply your returns.</p>
+                                </div>
+
+                                <div class="bg-yellow-50 p-5 rounded-2xl shadow-md border-b-4 border-yellow-400 transform transition duration-300 hover:scale-[1.02]">
+                                    <div class="flex items-center mb-2">
+                                        <svg class="w-6 h-6 text-yellow-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                                        <p class="text-sm font-extrabold text-yellow-700 uppercase">Risk Map</p>
+                                    </div>
+                                    <p class="text-base font-semibold text-gray-800">Match your investments to your financial timeline.</p>
+                                    <p class="text-xs text-gray-600 mt-1">Only allocate short-term funds to low-risk, highly liquid instruments.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            renderRiskReturnChart(); // Call the new function to draw the chart
+        }
+
+        function renderReminders() {
+            // Destroy existing charts
+            if (miniChartInstance) { miniChartInstance.destroy(); miniChartInstance = null; }
+            if (spendingChartInstance) { spendingChartInstance.destroy(); spendingChartInstance = null; }
+            if (investmentChartInstance) { investmentChartInstance.destroy(); investmentChartInstance = null; }
+
+            // Hide the default chat panel and show the dedicated reminder chat panel
+            document.getElementById('chat-panel').classList.add('hidden');
+            document.getElementById('floating-reminder-chat').classList.remove('hidden');
+
+
+            // Dynamic calculation
+            const currentBalance = USER_PROFILE.currentBalance;
+            const upcomingDueAmount = USER_PROFILE.upcomingDueAmount;
+            const daysUntilDue = USER_PROFILE.upcomingDueDays;
+            const amountToSave = Math.max(0, upcomingDueAmount - currentBalance);
+            
+            // Determine status and colors
+            let statusColor, statusBorder, statusText, statusMessageColor;
+            let neededMsg = "";
+            if (amountToSave === 0) {
+                statusColor = 'bg-green-50';
+                statusBorder = 'border-green-400';
+                statusText = "You're all set! Balance sufficient.";
+                statusMessageColor = 'text-green-800';
+                neededMsg = "You're perfectly covered!";
+            } else if (daysUntilDue <= 5 && amountToSave > 0) {
+                statusColor = 'bg-red-50';
+                statusBorder = 'border-red-400';
+                statusText = `Urgent: Needs ${formatINR(amountToSave)} more!`;
+                statusMessageColor = 'text-red-800';
+                neededMsg = "Act fast to cover the shortfall.";
+            } else {
+                statusColor = 'bg-yellow-50';
+                statusBorder = 'border-yellow-400';
+                statusText = `No action needed,Sufficient balance for upcoming payments.`;
+                statusMessageColor = 'text-yellow-800';
+                neededMsg = "Act fast to cover the shortfall.";
+            }
+
+
+            document.getElementById('main-content').innerHTML = `
+                <div class="flex items-center justify-between mb-8">
+                    <div>
+                        <h1 class="text-4xl font-extrabold text-gray-900 mb-1">Smart Reminders & Notifications</h1>
+                        <p class="text-lg text-gray-500">Stay ahead of your due dates with timely alerts and balance insights.</p>
+                    </div>
+                    <svg class="w-12 h-12 text-[#2563EB]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+                </div>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    
+                    <div class="lg:col-span-2 space-y-8">
+
+                        <div class="bg-blue-50 p-6 rounded-2xl shadow-xl border-2 border-blue-300">
+                            <h2 class="text-2xl font-bold text-blue-700 mb-3 flex items-center">
+                                <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13m-6 5h6"></path></svg>
+                                AI Assistant Monitoring
+                            </h2>
+                            <p class="text-gray-700 leading-relaxed">
+                                Our **AI Assistant** ensures you never miss a payment! It proactively monitors your scheduled dues, calculates the required funds, and sends timely alerts via **${USER_PROFILE.notificationPref}** or our secure in-app system.
+                            </p>
+                            <div class="mt-4 text-sm font-semibold text-blue-600">
+                                Next Due: ${USER_PROFILE.dueDescription} of ${formatINR(upcomingDueAmount)} in ${daysUntilDue} days.
+                            </div>
+                        </div>
+
+                        <div class="bg-white p-6 rounded-2xl shadow-xl border border-gray-100">
+                            <h2 class="text-xl font-bold text-gray-800 mb-8">Payment Reminder Flow</h2>
+                            
+                            <div class="flex justify-between items-start relative px-4 sm:px-0">
+                                
+                                <div class="absolute inset-x-4 sm:inset-x-12 top-4 h-1 bg-gray-200 z-0"></div>
+
+                                <div class="w-1/3 flex flex-col items-center relative z-10">
+                                    <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white shadow-lg transform transition-transform duration-300 hover:scale-110 mb-2">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                    </div>
+                                    <p class="font-bold text-sm text-gray-800">10 Days Before</p>
+                                    <p class="text-xs text-gray-600 text-center mt-1">(Due amount + Balance Check)</p>
+                                </div>
+
+                                <div class="w-1/3 flex flex-col items-center relative z-10">
+                                    <div class="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center text-white shadow-lg transform transition-transform duration-300 hover:scale-110 mb-2">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11.5V14m0-2.5v-6a1.5 1.5 0 113 0v6m-3-6h8"></path></svg>
+                                    </div>
+                                    <p class="font-bold text-sm text-gray-800">5 Days Before</p>
+                                    <p class="text-xs text-gray-600 text-center mt-1">(Priority Flag + Savings Goal)</p>
+                                </div>
+
+                                <div class="w-1/3 flex flex-col items-center relative z-10">
+                                    <div class="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center text-white shadow-lg transform transition-transform duration-300 hover:scale-110 mb-2">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                                    </div>
+                                    <p class="font-bold text-sm text-gray-800">Due Date</p>
+                                    <p class="text-xs text-gray-600 text-center mt-1">(Final Notice + Auto-Pay Status)</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white p-6 rounded-2xl shadow-xl border border-gray-100">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="text-xl font-bold text-gray-800">Recent Alerts History</h3>
+                                <button class="text-blue-500 hover:text-blue-700 text-sm font-semibold flex items-center">
+                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35-.426.426-1.065 1.064-1.065 2.573l-.882 1.063a1 1 0 001 1h2a1 1 0 001-1l.882-1.063A11.002 11.002 0 0019.618 17.276l-.882-1.063a1 1 0 00-1-1h-2a1 1 0 00-1 1l-.882 1.063A11.002 11.002 0 0019.618 17.276z"></path></svg>
+                                    Settings
+                                </button>
+                            </div>
+                            <ul class="space-y-3">
+                                <li class="p-3 bg-gray-50 rounded-lg flex justify-between items-center hover:bg-gray-100 transition">
+                                    <span class="text-sm font-medium text-gray-700">Insurance Due: ${formatINR(2000)}</span>
+                                    <span class="text-xs text-green-600 font-semibold">Sent 5 Days Ago (On Track)</span>
+                                </li>
+                                <li class="p-3 bg-gray-50 rounded-lg flex justify-between items-center hover:bg-gray-100 transition">
+                                    <span class="text-sm font-medium text-gray-700">Rent Payment: ${formatINR(30000)}</span>
+                                    <span class="text-xs text-blue-600 font-semibold">Sent 28 Days Ago (Paid)</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+
+                    <div class="lg:col-span-1 space-y-8">
+                        
+                        <div class="p-6 rounded-2xl shadow-xl border-2 ${statusBorder} ${statusColor}">
+                            <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                                <span class="mr-2"></span> Financial Status Check
+                            </h3>
+                            <div class="space-y-3">
+                                <div class="flex justify-between items-center border-b border-gray-200 pb-2">
+                                    <span class="text-gray-600 font-medium">Current Balance</span>
+                                    <span class="text-xl font-extrabold text-gray-900">${formatINR(150000)}</span>
+                                </div>
+                                <div class="flex justify-between items-center border-b border-gray-200 pb-2">
+                                    <span class="text-gray-600 font-medium">Upcoming Due (${daysUntilDue} days)</span>
+                                    <span class="text-xl font-extrabold text-red-500">${formatINR(upcomingDueAmount)}</span>
+                                </div>
+                                <div class="pt-2">
+                                    <span class="text-sm text-gray-700 block font-medium">Action Needed:</span>
+                                    <p class="text-lg font-extrabold ${statusMessageColor} mt-1">
+                                        ${statusText}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white p-6 rounded-2xl shadow-xl border border-gray-100">
+                            <h3 class="text-xl font-bold text-gray-800 mb-4">Sample ${USER_PROFILE.notificationPref} Alert</h3>
+                            
+                            <div class="flex justify-start">
+                                <div class="max-w-[90%] p-4 rounded-t-2xl rounded-br-2xl bg-[#DCF8C6] text-gray-800 shadow-md">
+                                    <p class="font-bold text-green-700 flex items-center mb-1 border-b border-green-300 pb-1">
+                                        <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
+                                        AI Reminder (10-Day Alert)
+                                    </p>
+                                    <p class="text-sm mt-2">Hi Adish!</p>
+                                    <p class="text-sm mt-1">Your **${USER_PROFILE.dueDescription}** of **${formatINR(upcomingDueAmount)}** is due in **${daysUntilDue} days**.</p>
+                                    <p class="text-sm mt-2 font-semibold ${statusMessageColor}">
+                                        Balance Check: ${formatINR(currentBalance)}. ${neededMsg}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderProfile() {
+            // Destroy existing charts
+            if (miniChartInstance) { miniChartInstance.destroy(); miniChartInstance = null; }
+            if (spendingChartInstance) { spendingChartInstance.destroy(); spendingChartInstance = null; }
+            if (investmentChartInstance) { investmentChartInstance.destroy(); investmentChartInstance = null; }
+
+            // Hide the dedicated reminder chat panel if it was visible
+            document.getElementById('floating-reminder-chat').classList.add('hidden');
+            document.getElementById('chat-panel').classList.remove('hidden'); // Show default chat panel
+            document.getElementById('chat-bubble').classList.add('hidden'); // Ensure chat bubble is hidden by default
+
+            const contentDiv = document.getElementById('main-content');
+            contentDiv.innerHTML = `
+                <div class="flex items-center justify-between mb-8">
+                    <div>
+                        <h1 class="text-4xl font-extrabold text-gray-900 mb-1">My Profile & Account</h1>
+                        <p class="text-lg text-gray-500">Manage your details and view lifetime metrics.</p>
+                    </div>
+                    <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 text-3xl font-bold border-4 border-white shadow-lg">
+                        A S
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 gap-8 lg:grid-cols-3">
+                    
+                    <div class="lg:col-span-2 space-y-6">
+                        <div class="bg-white p-8 rounded-2xl shadow-xl border border-gray-100">
+                            <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+                                <svg class="w-6 h-6 mr-2 text-[#2563EB]" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H5a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-5m-7-3v5l-3-3m0 0l-3 3"></path></svg>
+                                Personal Information
+                            </h2>
+                            <div class="space-y-4">
+                                ${Object.entries({
+                                    'Full Name': USER_PROFILE.name,
+                                    'Email Address': USER_PROFILE.email,
+                                    'User ID': USER_PROFILE.userId,
+                                    'Account Status': USER_PROFILE.accountStatus,
+                                    'Date Joined': USER_PROFILE.dateJoined,
+                                    'Risk Profile': USER_PROFILE.riskProfile
+                                }).map(([label, value]) => `
+                                    <div class="flex justify-between border-b border-gray-100 pb-2">
+                                        <span class="text-gray-500 text-sm">${label}</span>
+                                        <span class="font-semibold text-gray-700 ${label === 'Account Status' && value.includes('Active') ? 'text-green-600' : ''}">${value}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                            <button class="mt-6 w-full py-2 bg-blue-500 text-white rounded-xl font-semibold hover:bg-blue-600 transition-colors">
+                                Edit Profile Details
+                            </button>
+                        </div>
+                        
+                        <div class="bg-white p-8 rounded-2xl shadow-xl border border-gray-100">
+                            <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+                                <svg class="w-6 h-6 mr-2 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35-.426.426-1.065 1.064-1.065 2.573l-.882 1.063a1 1 0 001 1h2a1 1 0 001-1l.882-1.063A11.002 11.002 0 0019.618 17.276l-.882-1.063a1 1 0 00-1-1h-2a1 1 0 00-1 1l-.882 1.063A11.002 11.002 0 0019.618 17.276z"></path></svg>
+                                Account Settings
+                            </h2>
+                            <div class="space-y-4">
+                                <div class="flex justify-between">
+                                    <span class="text-gray-500">Language</span>
+                                    <span class="font-semibold text-gray-700">${USER_PROFILE.preferredLanguage}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-500">Theme Preference</span>
+                                    <span class="font-semibold text-gray-700">${USER_PROFILE.themePreference}</span>
+                                </div>
+                                <button class="w-full py-2 bg-gray-100 text-gray-700 rounded-xl font-semibold hover:bg-gray-200 transition-colors border border-gray-300">
+                                    Security & Privacy
+                                </button>
+                                <button class="w-full py-2 bg-red-50 text-red-600 rounded-xl font-semibold hover:bg-red-100 transition-colors border border-red-200">
+                                    Sign Out
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="lg:col-span-1 space-y-6">
+                        <div class="bg-blue-50 p-6 rounded-2xl shadow-md border-2 border-blue-200">
+                            <h3 class="text-xl font-bold text-blue-700 mb-4">Lifetime Financial Metrics</h3>
+                            <div class="space-y-4">
+                                <div class="border-b pb-3">
+                                    <p class="text-sm text-gray-500">Total Managed Assets</p>
+                                    <p class="text-2xl font-extrabold text-gray-800">${USER_PROFILE.totalAssets}</p>
+                                </div>
+                                <div class="border-b pb-3">
+                                    <p class="text-sm text-gray-500">Estimated Net Worth</p>
+                                    <p class="text-2xl font-extrabold text-gray-800">${USER_PROFILE.netWorth}</p>
+                                </div>
+                                <div>
+                                    <p class="text-sm text-gray-500">Lifetime Investment Gain</p>
+                                    <p class="text-2xl font-extrabold text-green-600">${USER_PROFILE.lifetimeInvestmentGain}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- CHART FUNCTIONS ---
+
+        function renderRiskReturnChart() {
+            const ctx = document.getElementById('riskReturnChart').getContext('2d');
+            
+            // Prepare data for the scatter plot
+            const chartDatasets = INVESTMENT_OPTIONS.map(opt => ({
+                label: opt.name,
+                data: [{ x: opt.riskValue, y: opt.returnValue }],
+                backgroundColor: opt.plotColor,
+                borderColor: opt.plotColor,
+                pointRadius: 10,
+                pointHoverRadius: 12,
+                showLine: false, // Ensure it's a scatter plot
+                // This custom data is used to render the point labels (risk/return descriptions)
+                customData: {
+                    risk: opt.risk,
+                    return: opt.return
+                }
+            }));
+            
+            if (investmentChartInstance) {
+                investmentChartInstance.destroy();
+            }
+
+            investmentChartInstance = new Chart(ctx, {
+                type: 'scatter',
+                data: {
+                    datasets: chartDatasets
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                usePointStyle: true,
+                                font: {
+                                    family: 'Poppins',
+                                    size: 12
+                                }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                title: (context) => context[0].dataset.label,
+                                label: (context) => `Risk Index: ${context.parsed.x}/10 | Est. Return: ${context.parsed.y}%`
+                            },
+                            bodyFont: { family: 'Poppins' },
+                            titleFont: { family: 'Poppins', weight: 'bold' },
+                            backgroundColor: 'rgba(37, 99, 235, 0.9)',
+                            padding: 10,
+                            boxPadding: 4,
+                            cornerRadius: 6
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Risk Index (1 = Low Risk, 10 = High Risk)',
+                                color: '#4B5563',
+                                font: { family: 'Poppins', size: 14, weight: '600' }
+                            },
+                            min: 1,
+                            max: 10,
+                            ticks: {
+                                stepSize: 1
+                            },
+                            grid: {
+                                color: 'rgba(200, 200, 200, 0.3)'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Estimated Annual Return (%)',
+                                color: '#4B5563',
+                                font: { family: 'Poppins', size: 14, weight: '600' }
+                            },
+                            min: 0,
+                            max: 20,
+                            ticks: {
+                                stepSize: 5,
+                                callback: (value) => `${value}%`
+                            },
+                            grid: {
+                                color: 'rgba(200, 200, 200, 0.3)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        function renderSpendingPieChart() {
+            const spendingData = calculateCategorySpending();
+            const labels = Object.keys(spendingData).filter(c => CATEGORY_TYPE[c] === 'Debit');
+            const data = labels.map(label => spendingData[label]);
+            const backgroundColors = labels.map(label => CATEGORY_COLORS[label] || '#9CA3AF');
+            
+            const ctx = document.getElementById('spendingPieChart').getContext('2d');
+
+            if (spendingChartInstance) {
+                spendingChartInstance.destroy();
+            }
+
+            spendingChartInstance = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        backgroundColor: backgroundColors,
+                        hoverOffset: 4,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right', // Move legend to the right
+                            labels: {
+                                font: {
+                                    family: 'Poppins',
+                                    size: 10
+                                }
+                            }
+                        },
+                        title: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed !== null) {
+                                        label += '₹' + context.parsed.toLocaleString('en-IN', { minimumFractionDigits: 2 });
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    },
+                    layout: {
+                        padding: {
+                            left: 10,
+                            right: 10,
+                            top: 10,
+                            bottom: 10
+                        }
+                    }
+                }
+            });
+        }
+        
+        function renderMiniChart(symbol, historyData, isPositive) {
+            const ctx = document.getElementById('miniChart').getContext('2d');
+            const data = historyData;
+            const labels = ['Day -6', 'Day -5', 'Day -4', 'Day -3', 'Day -2', 'Day -1', 'Today'];
+            const lineColor = isPositive ? '#10B981' : '#EF4444'; // Green or Red
+            const fillColor = isPositive ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)';
+
+            // FIX: Destroy the dedicated miniChartInstance before creating a new one
+            if (miniChartInstance) {
+                miniChartInstance.destroy();
+            }
+
+            miniChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: `${symbol} Price Trend`,
+                        data: data,
+                        borderColor: lineColor,
+                        backgroundColor: fillColor,
+                        borderWidth: 2,
+                        pointRadius: 3,
+                        pointBackgroundColor: lineColor,
+                        tension: 0.4, // Smooth curve
+                        fill: true,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { mode: 'index', intersect: false }
+                    },
+                    scales: {
+                        x: {
+                            display: true,
+                            grid: { display: false },
+                            ticks: { font: { size: 10 } }
+                        },
+                        y: {
+                            display: true,
+                            beginAtZero: false,
+                            grid: { color: 'rgba(200, 200, 200, 0.2)' },
+                            ticks: { font: { size: 10 } }
+                        }
+                    },
+                    layout: {
+                        padding: 0
+                    }
+                }
+            });
+        }
+
+        // FIX: Ensure the correct chart instance is destroyed on modal close
+        function closeAnalysisModal() {
+            const modal = document.getElementById('ai-analysis-modal');
+            modal.classList.remove('flex');
+            modal.classList.add('hidden');
+            if (miniChartInstance) {
+                miniChartInstance.destroy(); 
+                miniChartInstance = null;
+            }
+        }
+        
+        // FIX: Ensure correct variable used in showAnalysisModal and dynamic color is applied correctly
+        function showAnalysisModal(stockId) {
+            const stock = STOCK_HOLDINGS.find(s => s.id === stockId);
+            if (!stock) return console.error('Stock not found');
+
+            const insights = generateAIInsight(stock);
+            const modal = document.getElementById('ai-analysis-modal');
+
+            // 1. Update Core Info
+            document.getElementById('analysis-stock-name').textContent = stock.name;
+            document.getElementById('analysis-symbol').textContent = `(${stock.symbol})`;
+            document.getElementById('analysis-price').textContent = stock.price.toLocaleString('en-IN', { style: 'currency', currency: 'INR', minimumFractionDigits: 2 });
+
+            // 2. Update AI Insights
+            const trendBox = document.getElementById('analysis-trend-box');
+            trendBox.className = `p-5 rounded-xl transition-colors border ${insights.trendColor}`;
+            document.getElementById('analysis-trend').textContent = insights.trend;
+
+            document.getElementById('analysis-summary').textContent = insights.summary;
+            document.getElementById('analysis-explanation').textContent = insights.explanation;
+            document.getElementById('analysis-potential').textContent = insights.potential;
+
+            // 3. Update Suggestion
+            const suggestionText = insights.suggestion.toUpperCase();
+            document.getElementById('analysis-suggestion').textContent = suggestionText;
+
+            // FIX: Ensure the correct class format is applied using insights.suggestionColor
+            const colorClass = insights.suggestionColor;
+            document.getElementById('analysis-suggestion').className = `text-2xl font-extrabold mt-2 text-${colorClass}-500`;
+            document.getElementById('analysis-suggestion-reason').textContent = insights.suggestionReason;
+
+
+            // 4. Render Chart (Mini Chart)
+            renderMiniChart(stock.symbol, stock.history, stock.change.includes('+'));
+
+            // 5. Show Modal
+            document.getElementById('action-message').textContent = ''; // Clear previous action message
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function logAction(action) {
+            const messageElement = document.getElementById('action-message');
+            messageElement.textContent = `AI logged your choice: ${action}. Future suggestions will be adjusted.`;
+            messageElement.classList.remove('text-gray-500');
+            messageElement.classList.add('text-green-600', 'font-semibold');
+            setTimeout(() => {
+                messageElement.textContent = '';
+                messageElement.classList.remove('text-green-600', 'font-semibold');
+                messageElement.classList.add('text-gray-500');
+            }, 3000);
+        }
+
+        // --- NAVIGATION LOGIC ---
+
+        function handleNavigation(page) {
+            currentPage = page;
+            const sidebarItems = document.querySelectorAll('.sidebar-item');
+
+            sidebarItems.forEach(item => {
+                item.classList.remove('sidebar-item-active', 'text-white');
+                item.classList.add('text-gray-600');
+                if (item.getAttribute('data-page') === page) {
+                    item.classList.add('sidebar-item-active', 'text-white');
+                    item.classList.remove('text-gray-600', 'hover:bg-gray-100');
+                }
+            });
+
+            // Handle visibility of floating chat elements
+            if (page === 'reminders') {
+                document.getElementById('chat-panel').classList.add('hidden');
+                document.getElementById('floating-reminder-chat').classList.remove('hidden');
+            } else if (page === 'transfer') {
+                document.getElementById('chat-panel').classList.add('hidden');
+                document.getElementById('floating-reminder-chat').classList.add('hidden');
+            } else {
+                document.getElementById('chat-panel').classList.remove('hidden');
+                document.getElementById('floating-reminder-chat').classList.add('hidden');
+            }
+            
+            // Close the reminder chat dialog if open when switching pages
+            document.getElementById('reminder-chat-dialog').classList.add('hidden');
+
+
+            switch (page) {
+                case 'dashboard':
+                    renderDashboard();
+                    break;
+                case 'transfer':
+                    renderTransfer();
+                    break;
+                case 'investments':
+                    renderInvestments();
+                    break;
+                case 'reminders':
+                    renderReminders();
+                    break;
+                case 'profile':
+                    renderProfile();
+                    break;
+                default:
+                    renderDashboard();
+            }
+        }
+        
+        // --- CHAT LOGIC ---
+
+        function toggleChat() {
+            const chatBubble = document.getElementById('chat-bubble');
+            const toggleBtn = document.getElementById('chat-toggle-btn');
+
+            if (chatBubble.classList.contains('hidden')) {
+                // Show chat
+                chatBubble.classList.remove('hidden');
+                // Change icon to 'X'
+                toggleBtn.innerHTML = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>`;
+            } else {
+                // Hide chat
+                chatBubble.classList.add('hidden');
+                // Change icon to chat bubble
+                toggleBtn.innerHTML = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.805A1.79 1.79 0 014 14c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>`;
+            }
+        }
+        
+        function toggleReminderChat() {
+            const chatDialog = document.getElementById('reminder-chat-dialog');
+            chatDialog.classList.toggle('hidden');
+        }
+
+        function appendMessage(sender, text) {
+            const chatMessages = document.getElementById('chat-messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `flex ${sender === 'user' ? 'justify-end' : 'justify-start'}`;
+            messageDiv.innerHTML = `
+                <div class="p-3 rounded-xl max-w-[85%] ${sender === 'user' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800 shadow-md-custom'}">
+                    ${text}
+                </div>
+            `;
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight; // Auto-scroll to bottom
+        }
+
+        function simulateChatResponse(query) {
+            const lowerQuery = query.toLowerCase();
+            let response = "I'm sorry, I can only provide general financial guidance based on our simulated data. Could you please analyze a specific stock first by clicking the **[Analyze]** button?";
+
+            if (lowerQuery.includes("reliance") || lowerQuery.includes("r.i.l")) {
+                response = "Reliance is showing a **Slight Uptrend (+0.5%)**. Fundamentals are strong, but recent oil price volatility suggests a **Hold** position for moderate, stable returns.";
+            } else if (lowerQuery.includes("tcs") || lowerQuery.includes("t.c.s")) {
+                response = "TCS is in a **Strong Uptrend (+1.2%)** driven by major new deals. The AI recommendation is to **Buy** as short-term momentum is high. Potential: 15-20% growth.";
+            } else if (lowerQuery.includes("infosys") || lowerQuery.includes("infy")) {
+                response = "Infosys is currently in a **Downtrend (-0.8%)** likely due to sector-wide concerns. The AI model suggests keeping a close watch. It's currently a **Sell** for risk-averse investors.";
+            } else if (lowerQuery.includes("hdfc")) {
+                response = "HDFC Bank is experiencing a **Significant Downtrend (-2.1%)**. This might be a buying opportunity if you believe the dip is temporary (**Buy** is the AI suggestion here).";
+            } else if (lowerQuery.includes("buy") || lowerQuery.includes("sell") || lowerQuery.includes("hold")) {
+                 response = "For a personalized Buy/Sell/Hold suggestion, please click the **[Analyze]** button next to the stock in your holdings table. That gives the most accurate, real-time insight!";
+            } else if (lowerQuery.includes("balance") || lowerQuery.includes("money")) {
+                response = "Your Total Balance is **₹1,50,000**, and your Investments are valued at **₹8,50,000**. Keep up the savings!";
+            } else if (lowerQuery.includes("mutual fund") || lowerQuery.includes("sip")) {
+                response = "Mutual Funds are a great **Moderate Risk** option. They offer diversification and professional management, aiming for about **10%** annual returns over the long term.";
+            } else if (lowerQuery.includes("risk") || lowerQuery.includes("return")) {
+                response = "Remember the fundamental rule: **Higher Risk = Higher Potential Return**. Low-risk assets like FDs offer stability, while high-risk stocks offer higher growth potential. Your allocation should match your financial goals!";
+            } else if (lowerQuery.includes("profile") || lowerQuery.includes("name")) {
+                response = `Your name is ${USER_PROFILE.name}, and your current Risk Profile is set to ${USER_PROFILE.riskProfile}. You can update this on the 'My Profile' page!`;
+            }
+
+
+            setTimeout(() => {
+                appendMessage('ai', response);
+            }, 500); // Simulate network delay
+        }
+
+        document.getElementById('chat-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                const query = e.target.value.trim();
+                if (query) {
+                    appendMessage('user', query);
+                    e.target.value = '';
+                    simulateChatResponse(query);
+                }
+            }
+        });
+
+
+        // --- INITIALIZATION ---
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Setup navigation click handlers
+            document.querySelectorAll('.sidebar-item').forEach(item => {
+                item.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    handleNavigation(e.target.closest('a').getAttribute('data-page'));
+                });
+            });
+
+            // Initial render
+            handleNavigation('dashboard');
+
+            // Setup chat panel visibility on load
+            document.getElementById('chat-bubble').classList.add('hidden');
+            document.getElementById('chat-panel').classList.remove('hidden');
+        });
+    </script>
+</body>
+</html>
